@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-//Block reprersnets each "item" in the blockchain.
+//Block represents each "item" in the blockchain.
 type Block struct {
 	Index     int    // It is the position of the data record in the blockchain.
 	Timestamp string // It is automatically determined and is the time the data is written.
