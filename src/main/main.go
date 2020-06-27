@@ -14,6 +14,7 @@ import (
 	"time"
 )
 
+//Block reprersnets each "item" in the blockchain.
 type Block struct {
 	Index     int    // It is the position of the data record in the blockchain.
 	Timestamp string // It is automatically determined and is the time the data is written.
@@ -73,9 +74,10 @@ func replaceChain(newBlocks []Block) {
 	}
 }
 
+// Running web server.
 func run() error {
 	var mux = makeMukRouter()
-	httpPort := os.Getenv("PORT")
+	httpPort := os.Getenv("PORT") //Read a port number from .env file.
 	log.Println("Listening on ", os.Getenv("PORT"))
 	s := &http.Server{
 		Addr:           ":" + httpPort,
@@ -90,6 +92,7 @@ func run() error {
 	return nil
 }
 
+// Handler of web server.
 func makeMukRouter() http.Handler {
 	muxRouter := mux.NewRouter()
 	muxRouter.HandleFunc("/", handleGetBlockchain).Methods("GET")
@@ -97,6 +100,7 @@ func makeMukRouter() http.Handler {
 	return muxRouter
 }
 
+// Show the blockchain when we receive an http request.
 func handleGetBlockchain(w http.ResponseWriter, r *http.Request) {
 	bytes, err := json.MarshalIndent(Blockchain, "", "  ")
 	if err != nil {
@@ -106,6 +110,7 @@ func handleGetBlockchain(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(bytes))
 }
 
+// Create new block using BPM from POST request.
 func handleWriteBlock(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var m Message
@@ -122,6 +127,7 @@ func handleWriteBlock(w http.ResponseWriter, r *http.Request) {
 		respondWithJSON(w, r, http.StatusInternalServerError, m)
 		return
 	}
+	// Check the validation of blockchain.
 	if isBlockValid(newBlock, Blockchain[len(Blockchain)-1]) {
 		newBlockchain := append(Blockchain, newBlock)
 		replaceChain(newBlockchain)
