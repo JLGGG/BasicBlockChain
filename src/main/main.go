@@ -30,6 +30,7 @@ type Message struct {
 //Blockchain is a series of validated Blocks.
 var Blockchain []Block
 var newBlocks []Block
+var bcServer chan []Block
 
 func calculateHash(block Block) string {
 	record := string(block.Index) + block.Timestamp + string(block.BPM) + block.PrevHash
